@@ -1,4 +1,10 @@
 <template>
+  <div class="fixed top-0 left-0 w-full h-2 bg-gray-200">
+    <div
+      class="h-2 bg-blue-500"
+      :style="{ width: scrollPercentage + '%', transition: 'width 0.2s' }"
+    ></div>
+  </div>
   <button
     class="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-3 rounded-full"
     @click="scrollToTop">
@@ -9,10 +15,27 @@
 </template>
 
 <script setup>
-  const scrollToTop = () => {
+import { ref, onMounted, onUnmounted } from 'vue';
+const scrollToTop = () => {
       window.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
   }
+  
+const scrollPercentage = ref(0);
+
+const updateScrollPercentage = () => {
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+  scrollPercentage.value = (scrollPosition / scrollHeight) * 100;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', updateScrollPercentage);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateScrollPercentage);
+});
 </script>
